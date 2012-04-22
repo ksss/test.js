@@ -6,12 +6,12 @@ var is_error = false;
 var error_callback = function(){};
 
 /**
- * Test is a simple test unit
+ * test is a simple test unit
  */
-var Test = {};
+var test = {};
 
 /**
- * Test.run("test name", function () {
+ * test.run("test name", function () {
  *   ok(...);
  *   is(...);
  *   ...
@@ -20,7 +20,7 @@ var Test = {};
  *
  * throw exeption to top level if no write error method.
  */
-Test.run = function (name, callback) {
+test.run = function (name, callback) {
 	is_run = true;
 	if (arguments.length === 1) {
 		callback = name;
@@ -28,11 +28,11 @@ Test.run = function (name, callback) {
 	}
 	setTimeout(function(){
 		try {
-			Test.include();
+			test.include();
 			console.time(name);
 			callback();
 			console.timeEnd(name);
-			Test.remove();
+			test.remove();
 		} catch (ex) {
 			if (is_error) {
 				error_callback(ex);
@@ -41,20 +41,20 @@ Test.run = function (name, callback) {
 			}
 		}
 	}, 0);
-	return Test;
+	return test;
 };
 
 /**
  * simply throw object if use this as single.
  *
- * catch exeption and run callback if write error method after Test.run().
- * Test.run(function(){      // like try
+ * catch exeption and run callback if write error method after test.run().
+ * test.run(function(){      // like try
  *   ...
  * }).error(function (ex) {  // like catch
  *   console.leg(ex);
  * });
  */
-Test.error = function (callback) {
+test.error = function (callback) {
 	if (is_run) {
 		is_error = true;
 		error_callback = callback;
@@ -64,7 +64,7 @@ Test.error = function (callback) {
 };
 
 // assert for Bool, Number and String
-Test.ok = function (name, l, r) {
+test.ok = function (name, l, r) {
 	if (l === r) {
 		console.log(name + " -> :ok");
 	} else {
@@ -75,7 +75,7 @@ Test.ok = function (name, l, r) {
 };
 
 // assert for Object
-Test.is = function (name, got, expected, depth) {
+test.is = function (name, got, expected, depth) {
 	if(!depth) depth = 5;
 	if (JSON.stringify(got) === JSON.stringify(expected)) {
 		console.log(name + " -> is ok");
@@ -87,43 +87,44 @@ Test.is = function (name, got, expected, depth) {
 };
 
 // print all arguments
-Test.p = function () {
+test.p = function () {
 	console.log('\n# p');
 	console.log(Array.prototype.slice.call(arguments));
 	console.log();
 };
 
 // print arguments for Object
-Test.pp = function (obj, depth) {
+test.pp = function (obj, depth) {
 	console.log('\n# pp');
 	console.log(util.inspect(obj, true, depth || 5));
 	console.log();
 };
 
 // include all function of this
-Test.include = function (obj) {
+test.include = function (obj) {
 	if (!obj) obj = (function getGlobal() { return this; })();
-	for (var key in Test) if (Test.hasOwnProperty(key)) {
-		obj[key] = Test[key];
+	for (var key in test) if (test.hasOwnProperty(key)) {
+		obj[key] = test[key];
 	}
-	return Test;
+	return test;
 };
 
-// remove all function of Test
-Test.remove = function (obj) {
+// remove all function of test
+test.remove = function (obj) {
 	if (!obj) obj = (function getGlobal() { return this; })();
-	for (var key in Test) if (Test.hasOwnProperty(key)) {
+	for (var key in test) if (test.hasOwnProperty(key)) {
 		delete obj[key];
 	}
-	return Test;
+	return test;
 };
 
 // for node
 // test = require('test');
+// test.ok("use ok", true, true);
 (function(){
  	if (typeof exports === 'object') {
-		for (var it in Test) if (Test.hasOwnProperty(it)) {
-			exports[it] = Test[it];
+		for (var it in test) if (test.hasOwnProperty(it)) {
+			exports[it] = test[it];
 		}
 	}
 })();
